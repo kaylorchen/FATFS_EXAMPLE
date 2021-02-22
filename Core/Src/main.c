@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "fatfs.h"
 #include "sdio.h"
 #include "usart.h"
@@ -88,6 +89,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_SDIO_SD_Init();
   MX_USART1_UART_Init();
   MX_FATFS_Init();
@@ -95,9 +97,9 @@ int main(void)
   printf("\r\nFatFS example. \r\nFirmware compile date: %s %s\r\n", __DATE__, __TIME__);
   uint32_t byteswritten;                /* File write counts */
   uint32_t bytesread;                   /* File read counts */
-  uint8_t wtext[] = "This is STM32 working with FatFs"; /* File write buffer */
+  uint8_t wtext[] = "This is STM32 working with FatFs_with_DMA mode"; /* File write buffer */
   uint8_t rtext[100];
-  char filename[] = "stm32_example.txt";
+  char filename[] = "stm32_example_dma.txt";
   /*##-1- Register the file system object to the FatFs module ##############*/
   retSD = f_mount(&SDFatFS,"", 1);
   if(retSD)
