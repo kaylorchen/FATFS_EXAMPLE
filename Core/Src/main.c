@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 #include "dma.h"
 #include "fatfs.h"
 #include "sdio.h"
@@ -52,6 +53,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -94,74 +96,16 @@ int main(void)
   MX_USART1_UART_Init();
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
-  printf("\r\nFatFS example. \r\nFirmware compile date: %s %s\r\n", __DATE__, __TIME__);
-  uint32_t byteswritten;                /* File write counts */
-  uint32_t bytesread;                   /* File read counts */
-  uint8_t wtext[] = "This is STM32 working with FatFs_with_DMA mode"; /* File write buffer */
-  uint8_t rtext[100];
-  char filename[] = "stm32_example_dma.txt";
-  /*##-1- Register the file system object to the FatFs module ##############*/
-  retSD = f_mount(&SDFatFS,"", 1);
-  if(retSD)
-  {
-    printf("mount error : %d \r\n",retSD);
-    Error_Handler();
-  }
-  else
-    printf("mount sucess!!! \r\n");
-  /*##-2- Create and Open new text file objects with write access ######*/
-  retSD = f_open(&SDFile, filename, FA_CREATE_ALWAYS | FA_WRITE);
-  if(retSD)
-    printf("open file error : %d\r\n",retSD);
-  else
-    printf("open file sucess!!! \r\n");
-  /*##-3- Write data to the text files ###############################*/
-  retSD = f_write(&SDFile, wtext, sizeof(wtext), (void *)&byteswritten);
-  if(retSD)
-    printf("write file error : %d\r\n",retSD);
-  else
-  {
-    printf("write file sucess!!! \r\n");
-    printf("write Data : %s\r\n",wtext);
-  }
-  /*##-4- Close the open text files ################################*/
-  retSD = f_close(&SDFile);
-  if(retSD)
-    printf("close error : %d\r\n",retSD);
-  else
-    printf("close sucess!!! \r\n");
-
-  /*##-5- Open the text files object with read access ##############*/
-  retSD = f_open(&SDFile, filename, FA_READ);
-  if(retSD)
-    printf("open file error : %d\r\n",retSD);
-  else
-    printf("open file sucess!!! \r\n");
-
-  /*##-6- Read data from the text files ##########################*/
-  retSD = f_read(&SDFile, rtext, sizeof(rtext), (UINT*)&bytesread);
-  if(retSD)
-    printf("read error!!! %d\r\n",retSD);
-  else
-  {
-    printf("read sucess!!! \r\n");
-    printf("read Data : %s\r\n",rtext);
-  }
-
-  /*##-7- Close the open text files ############################*/
-  retSD = f_close(&SDFile);
-  if(retSD)
-    printf("close error!!! %d\r\n",retSD);
-  else
-    printf("close sucess!!! \r\n");
-
-  /*##-8- Compare read data with the expected data ############*/
-  if(bytesread == byteswritten)
-  {
-    printf("FatFs is working well!!!\r\n");
-  }
+  printf("\r\nFatFS DMA Freertos example. \r\nFirmware compile date: %s %s\r\n", __DATE__, __TIME__);
   /* USER CODE END 2 */
 
+  /* Init scheduler */
+  osKernelInitialize();  /* Call init function for freertos objects (in freertos.c) */
+  MX_FREERTOS_Init();
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -250,6 +194,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
+  printf("something error\r\n");
   __disable_irq();
   while (1)
   {
