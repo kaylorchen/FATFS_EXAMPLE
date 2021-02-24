@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "fatfs.h"
 #include "stdio.h"
+#include "tftpserverif.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -64,6 +65,7 @@ const osThreadAttr_t defaultTask_attributes = {
 
 void StartDefaultTask(void *argument);
 
+extern void MX_LWIP_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
@@ -115,72 +117,75 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
+  /* init code for LWIP */
+  MX_LWIP_Init();
   /* USER CODE BEGIN StartDefaultTask */
-  uint32_t byteswritten;                /* File write counts */
-  uint32_t bytesread;                   /* File read counts */
-  uint8_t wtext[] = "This is STM32 working with FatFs_with_DMA_and_Freertos mode"; /* File write buffer */
-  uint8_t rtext[100];
-  char filename[] = "stm32_example_dma_freertos.txt";
-  /*##-1- Register the file system object to the FatFs module ##############*/
-  retSD = f_mount(&SDFatFS,"", 1);
-  if(retSD)
-  {
-    printf("mount error : %d \r\n",retSD);
-    Error_Handler();
-  }
-  else
-    printf("mount sucess!!! \r\n");
-  /*##-2- Create and Open new text file objects with write access ######*/
-  retSD = f_open(&SDFile, filename, FA_CREATE_ALWAYS | FA_WRITE);
-  if(retSD)
-    printf("open file error : %d\r\n",retSD);
-  else
-    printf("open file sucess!!! \r\n");
-  /*##-3- Write data to the text files ###############################*/
-  retSD = f_write(&SDFile, wtext, sizeof(wtext), (void *)&byteswritten);
-  if(retSD)
-    printf("write file error : %d\r\n",retSD);
-  else
-  {
-    printf("write file sucess!!! \r\n");
-    printf("write Data : %s\r\n",wtext);
-  }
-  /*##-4- Close the open text files ################################*/
-  retSD = f_close(&SDFile);
-  if(retSD)
-    printf("close error : %d\r\n",retSD);
-  else
-    printf("close sucess!!! \r\n");
-
-  /*##-5- Open the text files object with read access ##############*/
-  retSD = f_open(&SDFile, filename, FA_READ);
-  if(retSD)
-    printf("open file error : %d\r\n",retSD);
-  else
-    printf("open file sucess!!! \r\n");
-
-  /*##-6- Read data from the text files ##########################*/
-  retSD = f_read(&SDFile, rtext, sizeof(rtext), (UINT*)&bytesread);
-  if(retSD)
-    printf("read error!!! %d\r\n",retSD);
-  else
-  {
-    printf("read sucess!!! \r\n");
-    printf("read Data : %s\r\n",rtext);
-  }
-
-  /*##-7- Close the open text files ############################*/
-  retSD = f_close(&SDFile);
-  if(retSD)
-    printf("close error!!! %d\r\n",retSD);
-  else
-    printf("close sucess!!! \r\n");
-
-  /*##-8- Compare read data with the expected data ############*/
-  if(bytesread == byteswritten)
-  {
-    printf("FatFs is working well!!!\r\n");
-  }
+//  uint32_t byteswritten;                /* File write counts */
+//  uint32_t bytesread;                   /* File read counts */
+//  uint8_t wtext[] = "This is STM32 working with FatFs_with_DMA_and_Freertos mode"; /* File write buffer */
+//  uint8_t rtext[100];
+//  char filename[] = "stm32_11111.txt";
+//  /*##-1- Register the file system object to the FatFs module ##############*/
+//  retSD = f_mount(&SDFatFS,"", 1);
+//  if(retSD)
+//  {
+//    printf("mount error : %d \r\n",retSD);
+//    Error_Handler();
+//  }
+//  else
+//    printf("mount sucess!!! \r\n");
+//  /*##-2- Create and Open new text file objects with write access ######*/
+//  retSD = f_open(&SDFile, filename, FA_CREATE_ALWAYS | FA_WRITE);
+//  if(retSD)
+//    printf("open file error : %d\r\n",retSD);
+//  else
+//    printf("open file sucess!!! \r\n");
+//  /*##-3- Write data to the text files ###############################*/
+//  retSD = f_write(&SDFile, wtext, sizeof(wtext), (void *)&byteswritten);
+//  if(retSD)
+//    printf("write file error : %d\r\n",retSD);
+//  else
+//  {
+//    printf("write file sucess!!! \r\n");
+//    printf("write Data : %s\r\n",wtext);
+//  }
+//  /*##-4- Close the open text files ################################*/
+//  retSD = f_close(&SDFile);
+//  if(retSD)
+//    printf("close error : %d\r\n",retSD);
+//  else
+//    printf("close sucess!!! \r\n");
+//
+//  /*##-5- Open the text files object with read access ##############*/
+//  retSD = f_open(&SDFile, filename, FA_READ);
+//  if(retSD)
+//    printf("open file error : %d\r\n",retSD);
+//  else
+//    printf("open file sucess!!! \r\n");
+//
+//  /*##-6- Read data from the text files ##########################*/
+//  retSD = f_read(&SDFile, rtext, sizeof(rtext), (UINT*)&bytesread);
+//  if(retSD)
+//    printf("read error!!! %d\r\n",retSD);
+//  else
+//  {
+//    printf("read sucess!!! \r\n");
+//    printf("read Data : %s\r\n",rtext);
+//  }
+//
+//  /*##-7- Close the open text files ############################*/
+//  retSD = f_close(&SDFile);
+//  if(retSD)
+//    printf("close error!!! %d\r\n",retSD);
+//  else
+//    printf("close sucess!!! \r\n");
+//
+//  /*##-8- Compare read data with the expected data ############*/
+//  if(bytesread == byteswritten)
+//  {
+//    printf("FatFs is working well!!!\r\n");
+//  }
+  tftpserverif_init();
   /* Infinite loop */
   for(;;)
   {
