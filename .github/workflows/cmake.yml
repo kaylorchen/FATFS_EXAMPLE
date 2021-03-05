@@ -41,7 +41,8 @@ jobs:
       run: |
         cmake --build . --config $BUILD_TYPE
         mkdir artifacts
-        mv ${{github.workspace}}/build/*.bin ${{github.workspace}}/build/*.hex artifacts
+        mv ${{github.workspace}}/build/*.bin ${{github.workspace}}/build/*.hex ./artifacts
+        ls ./artifacts
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
