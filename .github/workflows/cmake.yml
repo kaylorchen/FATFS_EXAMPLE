@@ -38,10 +38,21 @@ jobs:
       working-directory: ${{github.workspace}}/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --config $BUILD_TYPE
+      run: |
+        cmake --build . --config $BUILD_TYPE
+        mkdir artifacts
+        mv ${{github.workspace}}/build/*.bin ${{github.workspace}}/build/*.hex artifacts
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-          name: test
-          path: ${{github.workspace}}/build
+          name: artifacts
+          path: artifacts
+
+    - name: release
+        uses: softprops/action-gh-release@v1
+#        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "artifacts/**"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
