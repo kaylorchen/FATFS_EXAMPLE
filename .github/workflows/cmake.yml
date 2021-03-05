@@ -42,13 +42,14 @@ jobs:
         cmake --build . --config $BUILD_TYPE
         mkdir artifacts
         mv ${{github.workspace}}/build/*.bin ${{github.workspace}}/build/*.hex ./artifacts
+        pwd
         ls ./artifacts
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
           name: artifacts
-          path: artifacts
+          path: ./artifacts
 
     - name: release
       uses: softprops/action-gh-release@v1
